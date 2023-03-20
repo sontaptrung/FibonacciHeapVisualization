@@ -7,14 +7,14 @@ def main():
     # Create a new Fibonacci Heap
     heap = fh()
     gui = GUI()
-    heap.insert(5)
-    heap.insert(3)
-    heap.insert(8)
-    heap.insert(4)
-    heap.insert(1)
-    heap.insert(2)
-    # Remove the minimum element from the heap
-    heap.extract_min()
+    # heap.insert(5)
+    # heap.insert(3)
+    # heap.insert(8)
+    # heap.insert(4)
+    # heap.insert(1)
+    # heap.insert(2)
+    # # Remove the minimum element from the heap
+    # heap.extract_min()
     print("********Welcome to the Fibonacci Heap Simulator!********")
     while True:
         # Display the menu
@@ -24,30 +24,40 @@ def main():
             key = gui.getIntegerNumber("Enter the key: ")
             heap.insert(key)
         elif option == 2: # Delete min node
-            heap.extract_min()
+            if heap.min_node is None:
+                print("The heap is empty!")
+                continue
+            min_node_extracted = heap.extract_min()
+            print("The minimum node with key " + str(min_node_extracted.key) + " is deleted!")
         elif option == 3: # Find and decrease key
-            key = gui.getIntegerNumber("Enter the key: ")
-            nodeFound = heap.find_node_with_key(key)
-            if gui.notifyIfKeyNotFound(nodeFound) is True:
+            if heap.min_node is None:
+                print("The heap is empty!")
                 continue
-            else :
-                new_key = gui.getIntegerNumber("Enter the new key: ")
-                heap.decrease_key(nodeFound, new_key)
+            key = gui.getIntegerNumber("Enter the key: ")
+            if gui.notifyIfKeyLessThanMin(key, heap.min_node.key) is False:
+                node = heap.find_node_with_key(key)
+                if gui.notifyIfKeyNotFound(node) is False:
+                    new_key = gui.getIntegerNumber("Enter the new key: ")
+                    heap.decrease_key(node, new_key)
         elif option == 4: # Search a key
-            key = gui.getIntegerNumber("Enter the key: ")
-            if gui.notifyIfKeyLessThanMin(key, heap.min_node.key) is True:
+            if heap.min_node is None:
+                print("The heap is empty!")
                 continue
-            else:
+            key = gui.getIntegerNumber("Enter the key: ")
+            if gui.notifyIfKeyLessThanMin(key, heap.min_node.key) is False:
                 node = heap.find_node_with_key(key)
                 if gui.notifyIfKeyNotFound(node) is False:
                     heap.closePlot()
                     heap.draw_fibonacci_heap(node)
         elif option == 5: # Delete a node with a key
-            key = gui.getIntegerNumber("Enter the key: ")
-            node = heap.find_node_with_key(key)
-            if gui.notifyIfKeyNotFound(node) is True:
+            if heap.min_node is None:
+                print("The heap is empty!")
                 continue
-            heap.delete_node(heap.find_node_with_key(key))
+            key = gui.getIntegerNumber("Enter the key: ")
+            if gui.notifyIfKeyLessThanMin(key, heap.min_node.key) is False:
+                node = heap.find_node_with_key(key)
+                if gui.notifyIfKeyNotFound(node) is False:
+                    heap.delete_node(node)
         elif option == 6: # Draw the Fibonacci Heap
             heap.closePlot()
             heap.draw_fibonacci_heap()

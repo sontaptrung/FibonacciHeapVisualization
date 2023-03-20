@@ -50,15 +50,6 @@ class FibonacciHeap:
         return n
     
     
-    # actual linking of one node to another in the root list
-    # while also updating the child linked list
-    def heap_link(self, y, x):
-        self.remove_from_root_list(y)
-        y.left = y.right = y
-        self.merge_with_child_list(x, y)
-        x.degree += 1
-        y.parent = x
-        y.mark = False
 
 
     # merge two fibonacci heaps in O(1) time by concatenating the root lists
@@ -130,7 +121,16 @@ class FibonacciHeap:
             if A[i] is not None:
                 if A[i].key <= self.min_node.key:
                     self.min_node = A[i]
-
+    
+    # actual linking of one node to another in the root list
+    # while also updating the child linked list
+    def heap_link(self, y, x):
+        self.remove_from_root_list(y)
+        y.left = y.right = y
+        self.merge_with_child_list(x, y)
+        x.degree += 1
+        y.parent = x
+        y.mark = False
     
 
     def find_node_with_key(self, key):
@@ -242,12 +242,13 @@ class FibonacciHeap:
 
     def draw_fibonacci_heap(self, nodeFound=None):
         if (self.total_nodes == 0):
-            print("Heap is empty")
+            print("The heap is empty")
             return
-        G = nx.DiGraph()
+        G = nx.Graph()
         pos = {}
         labels = {}
         color = []
+        color_map = {}
         x = y = 0
         # Iterate through all roots and draw them in a line
 
@@ -257,41 +258,45 @@ class FibonacciHeap:
             nonlocal x
             nonlocal y
             pos[node] = (x, y)
+            G.add_node(node)
             if node == nodeFound:
                 labels[node] = (node.key, 'found')
-                color.append('purple')
+                color_map[node] = 'purple'
             elif node == self.min_node:
                 labels[node] = (node.key, 'min')
-                color.append('red')
+                color_map[node] = 'red'
             elif node.parent is None:
                 labels[node] = node.key
-                color.append('green')
+                color_map[node] = 'green'
             elif node.mark is True:
                 labels[node] = (node.key, 'marked')
-                color.append('blue')
+                color_map[node] = 'blue'
             else:
                 labels[node] = node.key
-                color.append('black')
+                color_map[node] = 'black'
 
             if node.child is not None:
                 for child in self.iterate(node.child):
                     y -= 1
                     draw_fibonacci_heap_helper(child, node, nodeFound)
                     y += 1
+            else:
+                x += 1
             if parent is not None:
                 G.add_edge(parent, node)
             else:
-                if node.right is not None:
+                if node.right is not None and node.right != node:
                     G.add_edge(node, node.right)
-            x += 1
+           
             return
         for node in self.iterate(self.root_list):
             draw_fibonacci_heap_helper(node, None, nodeFound)
         # print(color)
         # for key,value in pos.items():
         #     print(key.key)
+        color = [color_map.get(node) for node in G.nodes()]
         nx.draw(G, pos, with_labels=True, labels=labels, node_color=color, font_size=6,
-                node_size=2000, font_color='white', font_weight='bold', arrows=False)
+                node_size=2000, font_color='white', font_weight='bold')
         plt.show(block=False)
 
     def closePlot(self):

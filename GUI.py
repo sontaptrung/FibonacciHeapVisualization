@@ -12,7 +12,7 @@ class GUI:
     def getIntegerNumber(self, prompt):
         while True:
             try:
-                userInput = input(prompt)
+                userInput = input(prompt).strip()
                 if userInput == "": 
                     # display error message
                     print("Input cannot be empty.")
@@ -27,7 +27,7 @@ class GUI:
     def getMenuOption(self, prompt):
         while True:
             try:
-                userInput = input(prompt)
+                userInput = input(prompt).strip()
                 if userInput == "": 
                     # display error message
                     print("Input cannot be empty.")
@@ -49,9 +49,9 @@ class GUI:
         else:
             return False
 
-    def notifyIfKeyLessThanMin(self, node, min_node):
-        if node < min_node:
-            print("The key is less than the minimum key!")
+    def notifyIfKeyLessThanMin(self, key, min_key):
+        if key < min_key:
+            print("The key is less than the minimum key! The key is not found!")
             return True
         else:
             return False
